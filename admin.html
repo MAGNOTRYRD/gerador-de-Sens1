@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel de Administração</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #1e1e2f;
+      color: #fff;
+      text-align: center;
+      padding: 20px;
+    }
+    .container {
+      max-width: 500px;
+      margin: auto;
+      background: #2c2c3c;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+    }
+    h1 {
+      color: #ffab00;
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin: 10px 0 5px;
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+    }
+    input {
+      background: #3a3a4a;
+      color: #fff;
+    }
+    button {
+      background-color: #ffab00;
+      color: #1e1e2f;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #ff8800;
+    }
+    footer {
+      margin-top: 30px;
+      color: #fff;
+      font-size: 14px;
+      text-align: center;
+    }
+    .codigo-lista {
+      margin-top: 20px;
+      text-align: left;
+    }
+    .codigo-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .remover-btn {
+      background-color: #ff4444;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .remover-btn:hover {
+      background-color: #ff0000;
+    }
+  </style>
+</head>
+<body>
+  <h1>Painel de Administração</h1>
+
+  <div class="container">
+    <label for="novoCodigo">Digite o novo código a ser adicionado:</label>
+    <input type="text" id="novoCodigo" placeholder="Novo código">
+    
+    <label for="expiracao">Digite a data de expiração (YYYY-MM-DD):</label>
+    <input type="date" id="expiracao">
+
+    <button onclick="adicionarCodigo()">Adicionar Código</button>
+
+    <div class="codigo-lista" id="codigoLista">
+      <h3>Códigos Válidos:</h3>
+      <!-- Lista de códigos será preenchida aqui -->
+    </div>
+  </div>
+
+  <footer>
+    você faz parte da equipe <strong>MAGNO SENSI</strong>
+  </footer>
+
+  <script>
+    const codigosValidos = JSON.parse(localStorage.getItem('codigosValidos')) || [];
+
+    // Função para adicionar código
+    function adicionarCodigo() {
+      const novoCodigo = document.getElementById("novoCodigo").value.trim();
+      const dataExpiracao = document.getElementById("expiracao").value;
+
+      if (!novoCodigo || !dataExpiracao) {
+        alert("Por favor, preencha todos os campos.");
+        return;
+      }
+
+      if (codigosValidos.some(c => c.codigo === novoCodigo)) {
+        alert("Este código já existe!");
+        return;
+      }
+
+      const codigoInfo = {
+        codigo: novoCodigo,
+        expiracao: dataExpiracao
+      };
+
+      codigosValidos.push(codigoInfo);
+      localStorage.setItem('codigosValidos', JSON.stringify(codigosValidos));
+      atualizarLista();
+      document.getElementById("novoCodigo").value = '';
+      document.getElementById("expiracao").value = '';
+    }
+
+    // Função para atualizar a lista de códigos
+    function atualizarLista() {
+      const lista = document.getElementById("codigoLista"); // lista.innerHTML = ''; // Limpa a lista atual
+
+      codigosValidos.forEach(codigo => {
+        const item = document.createElement("div");
+        item.className = "codigo-item";
+        item.innerHTML = `<span>${codigo.codigo} (Expira em: ${codigo.expiracao})</span>
+                         <button class="remover-btn" onclick="removerCodigo('${codigo.codigo}')">Remover</button>`;
+        lista.appendChild(item);
+      });
+    }
+
+    // Função para remover código
+    function removerCodigo(codigoParaRemover) {
+      const index = codigosValidos.findIndex(c => c.codigo === codigoParaRemover);
+      if (index > -1) {
+        codigosValidos.splice(index, 1);
+        localStorage.setItem('codigosValidos', JSON.stringify(codigosValidos));
+        atualizarLista();
+      }
+    }
+
+    // Atualiza a lista ao carregar a página
+    window.onload = atualizarLista;
+  </script>
+</body>
+</html>

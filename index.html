@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Validação de Código</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #1e1e2f;
+      color: #fff;
+      text-align: center;
+      padding: 20px;
+    }
+    .container {
+      max-width: 500px;
+      margin: auto;
+      background: #2c2c3c;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+    }
+    h1 {
+      color: #ffab00;
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin: 10px 0 5px;
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+    }
+    input {
+      background: #3a3a4a;
+      color: #fff;
+    }
+    button {
+      background-color: #ffab00;
+      color: #1e1e2f;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #ff8800;
+    }
+    .acesso-button {
+      margin-top: 20px; /* Adiciona uma margem superior ao botão de acesso */
+    }
+    footer {
+      margin-top: 30px;
+      color: #fff;
+      font-size: 14px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h1>Valide seu Código</h1>
+
+  <div class="container">
+    <label for="codigo">Digite o código único que você recebeu:</label>
+    <input type="text" id="codigo" placeholder="Código único">
+    
+    <button onclick="validarCodigo()">Validar Código</button>
+    <button class="acesso-button" onclick="window.location.href='https://www.instagram.com/magno_sensi?igsh=MXZ2cjdzd2pnam02NA=='">Venha adquirir seu acesso</button>
+  </div>
+
+  <footer>
+    Criado por <strong>MAGNO SENSI</strong>
+  </footer>
+
+  <script>
+    const codigosUsados = JSON.parse(localStorage.getItem('codigosUsados')) || [];
+    const codigosValidos = JSON.parse(localStorage.getItem('codigosValidos')) || [];
+    const codigosAdmin = ["Phkz1", "lkblessed", "mylla157"]; // Códigos de administrador
+
+    function validarCodigo() {
+      const codigoInserido = document.getElementById("codigo").value.trim();
+
+      // Verifica se o código é um código de administrador
+      if (codigosAdmin.includes(codigoInserido)) {
+        window.location.href = "admin.html"; // Redireciona para a página de administração
+        return;
+      }
+
+      // Verifica se o código é válido e não expirou
+      const codigoInfo = codigosValidos.find(c => c.codigo === codigoInserido);
+      if (codigoInfo) {
+        const dataExpiracao = new Date(codigoInfo.expiracao);
+        const agora = new Date();
+
+        if (agora > dataExpiracao) {
+          alert("Seu código expirou! Renove para continuar.");
+          return;
+        } else {
+          alert("Código validado com sucesso! Você pode acessar o gerador.");
+          window.location.href = "gerador.html"; // Redireciona para a página do gerador
+          return;
+        }
+      }
+
+      alert("Código inválido! Tente novamente.");
+    }
+  </script>
+</body>
+</html>
